@@ -1,5 +1,3 @@
-# mcp-cli
-
-A CLI for the Model Context Protocol.
+# mcpx
 
 ![demo](./demo.gif)
