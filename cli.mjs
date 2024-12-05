@@ -103,7 +103,8 @@ async function main() {
     type: "autocomplete",
     message: "Pick a primitive",
     choices: primitives.map((p) => ({
-      title: `${colors.bold(p.type + "(" + p.value.name + ")")}: ${p.value.description}`,
+      title: colors.bold(p.type + "(" + p.value.name + ")"),
+      description: p.value.description,
       value: p,
     })),
   });
