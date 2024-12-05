@@ -1,6 +1,6 @@
 # mcp-cli
 
-A CLI for the Model Context Protocol.
+A CLI inspector for the Model Context Protocol
 
 ![demo](./demo.gif)
 
