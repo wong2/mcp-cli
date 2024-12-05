@@ -5,13 +5,13 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { readFile } from "node:fs/promises";
 import os from "node:os";
 import prompts from "prompts";
-import yoctoSpinner from "yocto-spinner";
 import colors from "yoctocolors";
+import { createSpinner, logger, prettyPrint } from "./utils.mjs";
 
 async function readConfig() {
   const defaultConfigFile = `${os.homedir()}/Library/Application Support/Claude/claude_desktop_config.json`;
   const configFilePath = process.argv[2] || defaultConfigFile;
-  const spinner = yoctoSpinner({ text: `Loading config from ${configFilePath}` }).start();
+  const spinner = createSpinner(`Loading config from ${configFilePath}`);
   const config = await readFile(configFilePath, "utf-8");
   spinner.success();
   return JSON.parse(config);
@@ -78,6 +78,16 @@ async function listPrimitives(client) {
   return primitives;
 }
 
+async function readPromptArgumentInputs(args) {
+  return prompts(
+    args.map((arg) => ({
+      type: "text",
+      name: arg.name,
+      message: colors.inverse((arg.required ? "* " : "") + `${arg.name}: ${arg.description}`),
+    }))
+  );
+}
+
 async function main() {
   const config = await readConfig();
   if (!config.mcpServers || Object.keys(config.mcpServers).length === 0) {
@@ -87,7 +97,7 @@ async function main() {
   const server = await pickServer(config);
   const serverConfig = config.mcpServers[server];
 
-  const spinner = yoctoSpinner({ text: "Connecting to server..." }).start();
+  const spinner = createSpinner("Connecting to server...");
 
   const client = await createClient(serverConfig);
   const primitives = await listPrimitives(client);
@@ -98,18 +108,58 @@ async function main() {
     ).join(", ")}`
   );
 
-  const { primitive } = await prompts({
-    name: "primitive",
-    type: "autocomplete",
-    message: "Pick a primitive",
-    choices: primitives.map((p) => ({
-      title: colors.bold(p.type + "(" + p.value.name + ")"),
-      description: p.value.description,
-      value: p,
-    })),
-  });
+  while (true) {
+    const { primitive } = await prompts(
+      {
+        name: "primitive",
+        type: "autocomplete",
+        message: "Pick a primitive",
+        choices: primitives.map((p) => ({
+          title: colors.bold(p.type + "(" + p.value.name + ")"),
+          description: p.value.description,
+          value: p,
+        })),
+      },
+      {
+        onCancel: async () => {
+          await client.close();
+          process.exit(0);
+        },
+      }
+    );
 
-  console.dir(primitive, { depth: null });
+    let result;
+    let spinner;
+    if (primitive.type === "resource") {
+      spinner = createSpinner(`Reading resource ${primitive.value.uri}...`);
+      result = await client.readResource({ uri: primitive.value.uri }).catch((err) => {
+        spinner.error(err.message);
+        spinner = undefined;
+      });
+    } else if (primitive.type === "tool") {
+      logger.error("Tools are not yet supported");
+    } else if (primitive.type === "prompt") {
+      const args = await readPromptArgumentInputs(primitive.value.arguments);
+      spinner = createSpinner(`Using prompt ${primitive.value.name}...`);
+      result = await client
+        .getPrompt({ name: primitive.value.name, arguments: args })
+        .catch((err) => {
+          spinner.error(err.message);
+          spinner = undefined;
+        });
+    }
+    if (spinner) {
+      spinner.success();
+    }
+    if (result) {
+      logger.log("\n");
+      prettyPrint(result);
+      logger.log("\n");
+    }
+  }
 }
 
-await main();
+await main().catch((err) => {
+  logger.error(err);
+  process.exit(1);
+});
