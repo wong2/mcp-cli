@@ -1,5 +1,5 @@
 {
-  "name": "mcp-cli",
+  "name": "@wong2/mcp-cli",
   "version": "1.0.0",
   "description": "CLI tool for the Model Context Protocol",
   "bin": {
