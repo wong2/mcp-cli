@@ -52,24 +52,29 @@ async function createClient(serverConfig) {
 async function listPrimitives(client) {
   const capabilities = client.getServerCapabilities();
   const primitives = [];
+  const promises = [];
   if (capabilities.resources) {
-    const { resources } = await client.listResources();
-    for (const item of resources) {
-      primitives.push({ type: "resource", value: item });
-    }
+    promises.push(
+      client.listResources().then(({ resources }) => {
+        resources.forEach((item) => primitives.push({ type: "resource", value: item }));
+      })
+    );
   }
   if (capabilities.tools) {
-    const { tools } = await client.listTools();
-    for (const item of tools) {
-      primitives.push({ type: "tool", value: item });
-    }
+    promises.push(
+      client.listTools().then(({ tools }) => {
+        tools.forEach((item) => primitives.push({ type: "tool", value: item }));
+      })
+    );
   }
   if (capabilities.prompts) {
-    const { prompts } = await client.listPrompts();
-    for (const item of prompts) {
-      primitives.push({ type: "prompt", value: item });
-    }
+    promises.push(
+      client.listPrompts().then(({ prompts }) => {
+        prompts.forEach((item) => primitives.push({ type: "prompt", value: item }));
+      })
+    );
   }
+  await Promise.all(promises);
   return primitives;
 }
 
