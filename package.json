@@ -1,7 +1,7 @@
 {
   "name": "@wong2/mcp-cli",
   "version": "1.0.0",
-  "description": "CLI tool for the Model Context Protocol",
+  "description": "A CLI inspector for the Model Context Protocol",
   "bin": {
     "mcp": "./cli.mjs"
   },
