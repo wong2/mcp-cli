@@ -1,14 +1,12 @@
 {
   "name": "mcp-cli",
   "version": "1.0.0",
-  "description": "",
+  "description": "CLI tool for the Model Context Protocol",
   "bin": {
     "mcp": "./cli.mjs"
   },
   "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [
     "MCP"
   ],
