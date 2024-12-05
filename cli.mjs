@@ -2,11 +2,18 @@
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { isEmpty } from "lodash-es";
 import { readFile } from "node:fs/promises";
 import os from "node:os";
 import prompts from "prompts";
 import colors from "yoctocolors";
-import { createSpinner, logger, prettyPrint } from "./utils.mjs";
+import {
+  createSpinner,
+  logger,
+  prettyPrint,
+  readJSONSchemaInputs,
+  readPromptArgumentInputs,
+} from "./utils.mjs";
 
 async function readConfig() {
   const defaultConfigFile = `${os.homedir()}/Library/Application Support/Claude/claude_desktop_config.json`;
@@ -78,19 +85,9 @@ async function listPrimitives(client) {
   return primitives;
 }
 
-async function readPromptArgumentInputs(args) {
-  return prompts(
-    args.map((arg) => ({
-      type: "text",
-      name: arg.name,
-      message: colors.inverse((arg.required ? "* " : "") + `${arg.name}: ${arg.description}`),
-    }))
-  );
-}
-
 async function main() {
   const config = await readConfig();
-  if (!config.mcpServers || Object.keys(config.mcpServers).length === 0) {
+  if (!config.mcpServers || isEmpty(config.mcpServers)) {
     throw new Error("No mcp servers found in config");
   }
 
@@ -137,7 +134,14 @@ async function main() {
         spinner = undefined;
       });
     } else if (primitive.type === "tool") {
-      logger.error("Tools are not yet supported");
+      const args = await readJSONSchemaInputs(primitive.value.inputSchema);
+      spinner = createSpinner(`Using tool ${primitive.value.name}...`);
+      result = await client
+        .callTool({ name: primitive.value.name, arguments: args })
+        .catch((err) => {
+          spinner.error(err.message);
+          spinner = undefined;
+        });
     } else if (primitive.type === "prompt") {
       const args = await readPromptArgumentInputs(primitive.value.arguments);
       spinner = createSpinner(`Using prompt ${primitive.value.name}...`);
@@ -152,7 +156,6 @@ async function main() {
       spinner.success();
     }
     if (result) {
-      logger.log("\n");
       prettyPrint(result);
       logger.log("\n");
     }

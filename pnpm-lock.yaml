@@ -8,9 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@json-schema-tools/traverse':
+        specifier: ^1.10.4
+        version: 1.10.4
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.1
         version: 1.0.1
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
@@ -22,6 +28,9 @@ importers:
         version: 2.1.1
 
 packages:
+
+  '@json-schema-tools/traverse@1.10.4':
+    resolution: {integrity: sha512-9e42zjhLIxzBONroNC4SGsTqdB877tzwH2S6lqgTav9K24kWJR9vNieeMVSuyqnY8FlclH21D8wsm/tuD9WA9Q==}
 
   '@modelcontextprotocol/sdk@1.0.1':
     resolution: {integrity: sha512-slLdFaxQJ9AlRg+hw28iiTtGvShAOgOKXcD0F91nUcRYiOMuS9ZBYjcdNZRXW9G5JQ511GRTdUy1zQVZDpJ+4w==}
@@ -52,6 +61,9 @@ packages:
   kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
+
+  lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
 
   prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
@@ -95,6 +107,8 @@ packages:
 
 snapshots:
 
+  '@json-schema-tools/traverse@1.10.4': {}
+
   '@modelcontextprotocol/sdk@1.0.1':
     dependencies:
       content-type: 1.0.5
@@ -122,6 +136,8 @@ snapshots:
   inherits@2.0.4: {}
 
   kleur@3.0.3: {}
+
+  lodash-es@4.17.21: {}
 
   prompts@2.4.2:
     dependencies:
