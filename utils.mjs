@@ -41,7 +41,7 @@ export async function readJSONSchemaInputs(schema) {
     }
     if (s.type === "string") {
       questions.push({ key, type: "text", required, initial: s.default });
-    } else if (s.type === "integer") {
+    } else if (s.type === "integer" || s.type === "number") {
       questions.push({
         key,
         type: "number",
