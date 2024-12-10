@@ -37,5 +37,5 @@ npx @wong2/mcp-cli node path/to/server/index.js args...
 ## Features
 
 - Run MCP servers from various sources
-- List TOols, Resources, Prompts
+- List Tools, Resources, Prompts
 - Call Tools, Read Resources, Read Prompts
