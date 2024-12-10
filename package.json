@@ -3,12 +3,11 @@
   "version": "1.1.1",
   "description": "A CLI inspector for the Model Context Protocol",
   "bin": {
-    "mcp-cli": "cli.mjs"
+    "mcp-cli": "src/cli.js"
   },
   "type": "module",
   "files": [
-    "cli.mjs",
-    "utils.mjs",
+    "src",
     "README.md"
   ],
   "scripts": {},
@@ -21,6 +20,7 @@
     "@json-schema-tools/traverse": "^1.10.4",
     "@modelcontextprotocol/sdk": "^1.0.1",
     "lodash-es": "^4.17.21",
+    "meow": "^13.2.0",
     "prompts": "^2.4.2",
     "yocto-spinner": "^0.1.1",
     "yoctocolors": "^2.1.1"

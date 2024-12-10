@@ -1,41 +1,18 @@
-#!/usr/bin/env node
-
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { isEmpty } from "lodash-es";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import os from "node:os";
 import prompts from "prompts";
 import colors from "yoctocolors";
 import {
   createSpinner,
+  getClaudeConfigPath,
   logger,
   prettyPrint,
   readJSONSchemaInputs,
   readPromptArgumentInputs,
-} from "./utils.mjs";
-
-async function readConfig() {
-  const defaultConfigFile = `${os.homedir()}/Library/Application Support/Claude/claude_desktop_config.json`;
-  const configFilePath = process.argv[2] || defaultConfigFile;
-  const spinner = createSpinner(`Loading config from ${configFilePath}`);
-  const config = await readFile(configFilePath, "utf-8");
-  spinner.success();
-  return JSON.parse(config);
-}
-
-async function pickServer(config) {
-  const { server } = await prompts({
-    name: "server",
-    type: "autocomplete",
-    message: "Pick a server",
-    choices: Object.keys(config.mcpServers).map((s) => ({
-      title: s,
-      value: s,
-    })),
-  });
-  return server;
-}
+} from "./utils.js";
 
 async function createClient(serverConfig) {
   const transport = new StdioClientTransport({
@@ -85,24 +62,14 @@ async function listPrimitives(client) {
   return primitives;
 }
 
-async function main() {
-  const config = await readConfig();
-  if (!config.mcpServers || isEmpty(config.mcpServers)) {
-    throw new Error("No mcp servers found in config");
-  }
-
-  const server = await pickServer(config);
-  const serverConfig = config.mcpServers[server];
-
+export async function runServer(serverConfig) {
   const spinner = createSpinner("Connecting to server...");
 
   const client = await createClient(serverConfig);
   const primitives = await listPrimitives(client);
 
   spinner.success(
-    `Connected to ${colors.bold(server)}, server capabilities: ${Object.keys(
-      client.getServerCapabilities()
-    ).join(", ")}`
+    `Connected, server capabilities: ${Object.keys(client.getServerCapabilities()).join(", ")}`
   );
 
   while (true) {
@@ -162,7 +129,36 @@ async function main() {
   }
 }
 
-await main().catch((err) => {
-  logger.error(err);
-  process.exit(1);
-});
+async function readConfig(configFilePath) {
+  if (!configFilePath || !existsSync(configFilePath)) {
+    throw new Error(`Config file not found: ${configFilePath}`);
+  }
+  const spinner = createSpinner(`Loading config from ${configFilePath}`);
+  const config = await readFile(configFilePath, "utf-8");
+  spinner.success();
+  return JSON.parse(config);
+}
+
+async function pickServer(config) {
+  const { server } = await prompts({
+    name: "server",
+    type: "autocomplete",
+    message: "Pick a server",
+    choices: Object.keys(config.mcpServers).map((s) => ({
+      title: s,
+      value: s,
+    })),
+  });
+  return server;
+}
+
+export async function runWithConfig(configPath) {
+  const defaultConfigFile = getClaudeConfigPath();
+  const config = await readConfig(configPath || defaultConfigFile);
+  if (!config.mcpServers || isEmpty(config.mcpServers)) {
+    throw new Error("No mcp servers found in config");
+  }
+  const server = await pickServer(config);
+  const serverConfig = config.mcpServers[server];
+  await runServer(serverConfig);
+}

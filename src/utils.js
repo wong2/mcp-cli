@@ -1,6 +1,8 @@
 import traverse from "@json-schema-tools/traverse";
 import { isEmpty, set as setPath } from "lodash-es";
 import { Console } from "node:console";
+import { homedir } from "os";
+import { join } from "path";
 import prompts from "prompts";
 import yoctoSpinner from "yocto-spinner";
 import colors from "yoctocolors";
@@ -13,6 +15,21 @@ export function prettyPrint(obj) {
 
 export function createSpinner(text) {
   return yoctoSpinner({ text, stream: process.stderr }).start();
+}
+
+export function getClaudeConfigPath() {
+  if (process.platform === "win32") {
+    return join(homedir(), "AppData", "Roaming", "Claude", "claude_desktop_config.json");
+  }
+  if (process.platform === "darwin") {
+    return join(
+      homedir(),
+      "Library",
+      "Application Support",
+      "Claude",
+      "claude_desktop_config.json"
+    );
+  }
 }
 
 export async function readPromptArgumentInputs(args) {
