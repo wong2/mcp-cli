@@ -79,7 +79,9 @@ export async function readJSONSchemaInputs(schema) {
       message: colors.inverse(`${required ? "* " : ""}${key}`),
       ...options,
     });
-    setPath(results, q.key, value);
+    if (value !== "") {
+      setPath(results, q.key, value);
+    }
   }
   return results;
 }
