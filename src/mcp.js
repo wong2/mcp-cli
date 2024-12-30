@@ -1,5 +1,6 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { LoggingMessageNotificationSchema } from "@modelcontextprotocol/sdk/types.js";
 import { isEmpty } from "lodash-es";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -29,6 +30,9 @@ async function createClient(serverConfig) {
       capabilities: {},
     }
   );
+  client.setNotificationHandler(LoggingMessageNotificationSchema, (notification) => {
+    logger.debug("[server log]:", notification.params.data);
+  });
   await client.connect(transport);
   return client;
 }
