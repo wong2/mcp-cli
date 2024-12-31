@@ -40,7 +40,7 @@ export async function readPromptArgumentInputs(args) {
     args.map((arg) => ({
       type: "text",
       name: arg.name,
-      message: colors.inverse((arg.required ? "* " : "") + `${arg.name}: ${arg.description}`),
+      message: colors.dim((arg.required ? "* " : "") + `${arg.name}: ${arg.description}`),
     }))
   );
 }
@@ -76,7 +76,7 @@ export async function readJSONSchemaInputs(schema) {
     const { key, required, ...options } = q;
     const { value } = await prompts({
       name: "value",
-      message: colors.inverse(`${required ? "* " : ""}${key}`),
+      message: colors.dim(`${required ? "* " : ""}${key}`),
       ...options,
     });
     if (value !== "") {
