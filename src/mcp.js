@@ -1,5 +1,6 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { LoggingMessageNotificationSchema } from "@modelcontextprotocol/sdk/types.js";
 import { isEmpty } from "lodash-es";
 import { existsSync } from "node:fs";
@@ -15,25 +16,11 @@ import {
   readPromptArgumentInputs,
 } from "./utils.js";
 
-async function createClient(serverConfig) {
-  const transport = new StdioClientTransport({
-    command: serverConfig.command,
-    args: serverConfig.args,
-    env: serverConfig.env,
-  });
-  const client = new Client(
-    {
-      name: "mcp-cli",
-      version: "1.0.0",
-    },
-    {
-      capabilities: {},
-    }
-  );
+async function createClient() {
+  const client = new Client({ name: "mcp-cli", version: "1.0.0" }, { capabilities: {} });
   client.setNotificationHandler(LoggingMessageNotificationSchema, (notification) => {
     logger.debug("[server log]:", notification.params.data);
   });
-  await client.connect(transport);
   return client;
 }
 
@@ -66,10 +53,11 @@ async function listPrimitives(client) {
   return primitives;
 }
 
-export async function runServer(serverConfig) {
+async function connectServer(transport) {
   const spinner = createSpinner("Connecting to server...");
 
-  const client = await createClient(serverConfig);
+  const client = await createClient();
+  await client.connect(transport);
   const primitives = await listPrimitives(client);
 
   spinner.success(
@@ -156,6 +144,11 @@ async function pickServer(config) {
   return server;
 }
 
+export async function runWithCommand(command, args) {
+  const transport = new StdioClientTransport({ command, args });
+  await connectServer(transport);
+}
+
 export async function runWithConfig(configPath) {
   const defaultConfigFile = getClaudeConfigPath();
   const config = await readConfig(configPath || defaultConfigFile);
@@ -164,5 +157,11 @@ export async function runWithConfig(configPath) {
   }
   const server = await pickServer(config);
   const serverConfig = config.mcpServers[server];
-  await runServer(serverConfig);
+  const transport = new StdioClientTransport(serverConfig);
+  await connectServer(transport);
+}
+
+export async function runWithSSE(uri) {
+  const transport = new SSEClientTransport(new URL(uri));
+  await connectServer(transport);
 }

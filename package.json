@@ -19,6 +19,7 @@
   "dependencies": {
     "@json-schema-tools/traverse": "^1.10.4",
     "@modelcontextprotocol/sdk": "^1.0.1",
+    "eventsource": "^3.0.2",
     "lodash-es": "^4.17.21",
     "meow": "^13.2.0",
     "prompts": "^2.4.2",
