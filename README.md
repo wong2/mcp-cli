@@ -2,7 +2,7 @@
 
 A CLI inspector for the Model Context Protocol
 
-![demo](demo.gif)
+https://github.com/user-attachments/assets/4cd113e9-f097-4c9d-b391-045c5f213183
 
 ## Usage
 
