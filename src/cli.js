@@ -33,7 +33,7 @@ const cli = meow(
 );
 
 if (cli.input.length > 0) {
-  const [command, ...args] = cli.input;
+  const [command, ...args] = process.argv.slice(2);
   await runWithCommand(command, args);
 } else if (cli.flags.sse) {
   await runWithSSE(cli.flags.sse);
