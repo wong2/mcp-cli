@@ -157,6 +157,9 @@ export async function runWithConfig(configPath) {
   }
   const server = await pickServer(config);
   const serverConfig = config.mcpServers[server];
+  if (serverConfig.env) {
+    serverConfig.env = { ...serverConfig.env, PATH: process.env.PATH };
+  }
   const transport = new StdioClientTransport(serverConfig);
   await connectServer(transport);
 }
