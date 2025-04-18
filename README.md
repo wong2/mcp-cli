@@ -34,13 +34,17 @@ npx @wong2/mcp-cli npx <package-name> <args>
 npx @wong2/mcp-cli node path/to/server/index.js args...
 ```
 
+### Connect to a running server over Streamable HTTP
+
+```bash
+npx @wong2/mcp-cli --url http://localhost:8000/mcp
+```
+
 ### Connect to a running server over SSE
 
 ```bash
 npx @wong2/mcp-cli --sse http://localhost:8000/sse
 ```
-
-You need to first start an MCP server running over [SSE transport](https://modelcontextprotocol.io/docs/concepts/transports#server-sent-events-sse).
 
 ## Features
 
@@ -50,5 +54,5 @@ You need to first start an MCP server running over [SSE transport](https://model
 
 ## Related
 
-- [LiteMCP](https://github.com/wong2/litemcp) - A TypeScript library that simplifies MCP server development
 - [mcpservers.org](https://mcpservers.org) - A curated list of MCP servers
+- [LiteMCP](https://github.com/wong2/litemcp) - A TypeScript library that simplifies MCP server development
