@@ -1,6 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { LoggingMessageNotificationSchema } from "@modelcontextprotocol/sdk/types.js";
 import { isEmpty } from "lodash-es";
 import { existsSync } from "node:fs";
@@ -166,5 +167,10 @@ export async function runWithConfig(configPath) {
 
 export async function runWithSSE(uri) {
   const transport = new SSEClientTransport(new URL(uri));
+  await connectServer(transport);
+}
+
+export async function runWithURL(uri) {
+  const transport = new StreamableHTTPClientTransport(new URL(uri));
   await connectServer(transport);
 }
