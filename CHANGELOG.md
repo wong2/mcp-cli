@@ -1,6 +1,10 @@
-# 1.6.0
+# 1.7.0
 
 - Add support for streamable HTTP endpoint
+
+# 1.6.0
+
+- Ensure `PATH` is set in server environment
 
 # 1.5.0
 
