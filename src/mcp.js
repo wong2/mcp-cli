@@ -145,8 +145,8 @@ async function pickServer(config) {
   return server;
 }
 
-export async function runWithCommand(command, args) {
-  const transport = new StdioClientTransport({ command, args });
+export async function runWithCommand(command, args, env) {
+  const transport = new StdioClientTransport({ command, args, env });
   await connectServer(transport);
 }
 
