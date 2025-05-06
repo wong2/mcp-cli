@@ -53,6 +53,12 @@ npx @wong2/mcp-cli --url http://localhost:8000/mcp
 npx @wong2/mcp-cli --sse http://localhost:8000/sse
 ```
 
+### Purge stored data (OAuth tokens, etc.)
+
+```bash
+npx @wong2/mcp-cli purge
+```
+
 ## Related
 
 - [mcpservers.org](https://mcpservers.org) - A curated list of MCP servers

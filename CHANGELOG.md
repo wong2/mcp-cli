@@ -1,3 +1,7 @@
+# 1.10.0
+
+- Add `@wong2/mcp-cli purge` command to clear stored OAuth data
+
 # 1.9.0
 
 - Add OAuth support for SSE and Streamable HTTP servers
