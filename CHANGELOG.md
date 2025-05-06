@@ -1,3 +1,7 @@
+# 1.9.0
+
+- Add OAuth support for SSE and Streamable HTTP servers
+
 # 1.8.0
 
 - Add `--pass-env` flag for passing environment variables in current shell to stdio server
