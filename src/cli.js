@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import meow from "meow";
-import "./eventsource-polyfill.js";
-import { runWithCommand, runWithConfig, runWithSSE, runWithURL } from "./mcp.js";
+import meow from 'meow'
+import './eventsource-polyfill.js'
+import { runWithCommand, runWithConfig, runWithSSE, runWithURL } from './mcp.js'
 
 const cli = meow(
   `
@@ -24,24 +24,24 @@ const cli = meow(
     importMeta: import.meta,
     flags: {
       config: {
-        type: "string",
-        shortFlag: "c",
+        type: 'string',
+        shortFlag: 'c',
       },
       passEnv: {
-        type: "boolean",
-        shortFlag: "e",
+        type: 'boolean',
+        shortFlag: 'e',
       },
     },
-  }
-);
+  },
+)
 
 if (cli.input.length > 0) {
-  const [command, ...args] = cli.input;
-  await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined);
+  const [command, ...args] = cli.input
+  await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined)
 } else if (cli.flags.url) {
-  await runWithURL(cli.flags.url);
+  await runWithURL(cli.flags.url)
 } else if (cli.flags.sse) {
-  await runWithSSE(cli.flags.sse);
+  await runWithSSE(cli.flags.sse)
 } else {
-  await runWithConfig(cli.flags.config);
+  await runWithConfig(cli.flags.config)
 }
