@@ -171,7 +171,7 @@ export async function runWithConfig(configPath) {
 }
 
 async function connectRemoteServer(uri, initialTransport) {
-  const oauthConfig = { port: await getPort(), path: '/oauth/callback' }
+  const oauthConfig = { port: await getPort({ port: 49153 }), path: '/oauth/callback' }
   const createTransport = () => {
     const serverId = crypto.createHash('sha256').update(uri).digest('hex')
     const oauthRedirectUrl = `http://127.0.0.1:${oauthConfig.port}${oauthConfig.path}`
