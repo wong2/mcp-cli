@@ -3,6 +3,7 @@
 import meow from 'meow'
 import './eventsource-polyfill.js'
 import { runWithCommand, runWithConfig, runWithSSE, runWithURL } from './mcp.js'
+import { purge } from './config.js'
 
 const cli = meow(
   `
@@ -13,6 +14,7 @@ const cli = meow(
     $ mcp-cli [--pass-env] node path/to/server/index.js args...
     $ mcp-cli --url http://localhost:8000/mcp
     $ mcp-cli --sse http://localhost:8000/sse
+    $ mcp-cli purge
 
 	Options
 	  --config, -c    Path to the config file
@@ -35,7 +37,9 @@ const cli = meow(
   },
 )
 
-if (cli.input.length > 0) {
+if (cli.input[0] === 'purge') {
+  purge()
+} else if (cli.input.length > 0) {
   const [command, ...args] = cli.input
   await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined)
 } else if (cli.flags.url) {

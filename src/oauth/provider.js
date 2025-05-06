@@ -1,9 +1,7 @@
 // @ts-check
 
 import open from 'open'
-import Conf from 'conf'
-
-const config = new Conf({ projectName: 'mcp-cli' })
+import { config } from '../config.js'
 
 /** @typedef {import("@modelcontextprotocol/sdk/client/auth.js").OAuthClientProvider} OAuthClientProvider */
 /** @implements {OAuthClientProvider} */
