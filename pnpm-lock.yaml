@@ -12,11 +12,11 @@ importers:
         specifier: ^1.10.4
         version: 1.10.4
       '@modelcontextprotocol/sdk':
-        specifier: ^1.10.0
-        version: 1.10.0
+        specifier: ^1.11.0
+        version: 1.11.0
       eventsource:
-        specifier: ^3.0.5
-        version: 3.0.5
+        specifier: ^3.0.6
+        version: 3.0.6
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -27,8 +27,8 @@ importers:
         specifier: ^2.4.2
         version: 2.4.2
       yocto-spinner:
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
       yoctocolors:
         specifier: ^2.1.1
         version: 2.1.1
@@ -38,8 +38,8 @@ packages:
   '@json-schema-tools/traverse@1.10.4':
     resolution: {integrity: sha512-9e42zjhLIxzBONroNC4SGsTqdB877tzwH2S6lqgTav9K24kWJR9vNieeMVSuyqnY8FlclH21D8wsm/tuD9WA9Q==}
 
-  '@modelcontextprotocol/sdk@1.10.0':
-    resolution: {integrity: sha512-wijOavYZfSOADbVM0LA7mrQ17N4IKNdFcfezknCCsZ1Y1KstVWlkDZ5ebcxuQJmqTTxsNjBHLc7it1SV0TBiPg==, tarball: https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.10.0.tgz}
+  '@modelcontextprotocol/sdk@1.11.0':
+    resolution: {integrity: sha512-k/1pb70eD638anoi0e8wUGAlbMJXyvdV4p62Ko+EZ7eBe1xMx8Uhak1R5DgfoofsK5IBBnRwsYGTaLZl+6/+RQ==, tarball: https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.11.0.tgz}
     engines: {node: '>=18'}
 
   accepts@2.0.0:
@@ -142,12 +142,12 @@ packages:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
 
-  eventsource-parser@3.0.0:
-    resolution: {integrity: sha512-T1C0XCUimhxVQzW4zFipdx0SficT651NnkR0ZSH3yQwh+mFMdLfgjABVi4YtMTtaL4s168593DaoaRLMqryavA==}
+  eventsource-parser@3.0.1:
+    resolution: {integrity: sha512-VARTJ9CYeuQYb0pZEPbzi740OWFgpHe7AYJ2WFZVnUDUQp5Dk2yJUgF36YsZ81cOyxT0QxmXD2EQpapAouzWVA==, tarball: https://registry.npmjs.org/eventsource-parser/-/eventsource-parser-3.0.1.tgz}
     engines: {node: '>=18.0.0'}
 
-  eventsource@3.0.5:
-    resolution: {integrity: sha512-LT/5J605bx5SNyE+ITBDiM3FxffBiq9un7Vx0EwMDM3vg8sWKx/tO2zC+LMqZ+smAM0F2hblaDZUVZF0te2pSw==}
+  eventsource@3.0.6:
+    resolution: {integrity: sha512-l19WpE2m9hSuyP06+FbuUUf1G+R0SFLrtQfbRb9PRr+oimOfxQhgGCbVaXg5IvZyyTThJsxh6L/srkMiCeBPDA==, tarball: https://registry.npmjs.org/eventsource/-/eventsource-3.0.6.tgz}
     engines: {node: '>=18.0.0'}
 
   express-rate-limit@7.5.0:
@@ -412,8 +412,8 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  yocto-spinner@0.2.1:
-    resolution: {integrity: sha512-lHHxjh0bXaLgdJy3cNnVb/F9myx3CkhrvSOEVTkaUgNMXnYFa2xYPVhtGnqhh3jErY2gParBOHallCbc7NrlZQ==}
+  yocto-spinner@0.2.2:
+    resolution: {integrity: sha512-21rPcM3e4vCpOXThiFRByX8amU5By1R0wNS8Oex+DP3YgC8xdU0vEJ/K8cbPLiIJVosSSysgcFof6s6MSD5/Vw==, tarball: https://registry.npmjs.org/yocto-spinner/-/yocto-spinner-0.2.2.tgz}
     engines: {node: '>=18.19'}
 
   yoctocolors@2.1.1:
@@ -432,12 +432,12 @@ snapshots:
 
   '@json-schema-tools/traverse@1.10.4': {}
 
-  '@modelcontextprotocol/sdk@1.10.0':
+  '@modelcontextprotocol/sdk@1.11.0':
     dependencies:
       content-type: 1.0.5
       cors: 2.8.5
       cross-spawn: 7.0.6
-      eventsource: 3.0.5
+      eventsource: 3.0.6
       express: 5.0.1
       express-rate-limit: 7.5.0(express@5.0.1)
       pkce-challenge: 5.0.0
@@ -533,11 +533,11 @@ snapshots:
 
   etag@1.8.1: {}
 
-  eventsource-parser@3.0.0: {}
+  eventsource-parser@3.0.1: {}
 
-  eventsource@3.0.5:
+  eventsource@3.0.6:
     dependencies:
-      eventsource-parser: 3.0.0
+      eventsource-parser: 3.0.1
 
   express-rate-limit@7.5.0(express@5.0.1):
     dependencies:
@@ -824,7 +824,7 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  yocto-spinner@0.2.1:
+  yocto-spinner@0.2.2:
     dependencies:
       yoctocolors: 2.1.1
 
