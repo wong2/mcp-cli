@@ -62,68 +62,72 @@ async function listPrimitives(client) {
 async function connectServer(transport) {
   const spinner = createSpinner('Connecting to server...')
 
-  let client
   try {
-    client = await createClient()
-    await client.connect(transport)
-  } catch (err) {
-    spinner.stop()
-    throw err
-  }
+    let client
+    try {
+      client = await createClient()
+      await client.connect(transport)
+    } catch (err) {
+      spinner.stop()
+      throw err
+    }
 
-  const primitives = await listPrimitives(client)
-  spinner.success(`Connected, server capabilities: ${Object.keys(client.getServerCapabilities()).join(', ')}`)
+    const primitives = await listPrimitives(client)
+    spinner.success(`Connected, server capabilities: ${Object.keys(client.getServerCapabilities()).join(', ')}`)
 
-  while (true) {
-    const { primitive } = await prompts(
-      {
-        name: 'primitive',
-        type: 'autocomplete',
-        message: 'Pick a primitive',
-        choices: primitives.map((p) => ({
-          title: colors.bold(p.type + '(' + p.value.name + ')'),
-          description: p.value.description,
-          value: p,
-        })),
-      },
-      {
-        onCancel: async () => {
-          await client.close()
-          process.exit(0)
+    while (true) {
+      const { primitive } = await prompts(
+        {
+          name: 'primitive',
+          type: 'autocomplete',
+          message: 'Pick a primitive',
+          choices: primitives.map((p) => ({
+            title: colors.bold(p.type + '(' + p.value.name + ')'),
+            description: p.value.description,
+            value: p,
+          })),
         },
-      },
-    )
+        {
+          onCancel: async () => {
+            await client.close()
+            process.exit(0)
+          },
+        },
+      )
 
-    let result
-    let spinner
-    if (primitive.type === 'resource') {
-      spinner = createSpinner(`Reading resource ${primitive.value.uri}...`)
-      result = await client.readResource({ uri: primitive.value.uri }).catch((err) => {
-        spinner.error(err.message)
-        spinner = undefined
-      })
-    } else if (primitive.type === 'tool') {
-      const args = await readJSONSchemaInputs(primitive.value.inputSchema)
-      spinner = createSpinner(`Using tool ${primitive.value.name}...`)
-      result = await client.callTool({ name: primitive.value.name, arguments: args }).catch((err) => {
-        spinner.error(err.message)
-        spinner = undefined
-      })
-    } else if (primitive.type === 'prompt') {
-      const args = await readPromptArgumentInputs(primitive.value.arguments)
-      spinner = createSpinner(`Using prompt ${primitive.value.name}...`)
-      result = await client.getPrompt({ name: primitive.value.name, arguments: args }).catch((err) => {
-        spinner.error(err.message)
-        spinner = undefined
-      })
+      let result
+      let spinner
+      if (primitive.type === 'resource') {
+        spinner = createSpinner(`Reading resource ${primitive.value.uri}...`)
+        result = await client.readResource({ uri: primitive.value.uri }).catch((err) => {
+          spinner.error(err.message)
+          spinner = undefined
+        })
+      } else if (primitive.type === 'tool') {
+        const args = await readJSONSchemaInputs(primitive.value.inputSchema)
+        spinner = createSpinner(`Using tool ${primitive.value.name}...`)
+        result = await client.callTool({ name: primitive.value.name, arguments: args }).catch((err) => {
+          spinner.error(err.message)
+          spinner = undefined
+        })
+      } else if (primitive.type === 'prompt') {
+        const args = await readPromptArgumentInputs(primitive.value.arguments)
+        spinner = createSpinner(`Using prompt ${primitive.value.name}...`)
+        result = await client.getPrompt({ name: primitive.value.name, arguments: args }).catch((err) => {
+          spinner.error(err.message)
+          spinner = undefined
+        })
+      }
+      if (spinner) {
+        spinner.success()
+      }
+      if (result) {
+        prettyPrint(result)
+        logger.log('\n')
+      }
     }
-    if (spinner) {
-      spinner.success()
-    }
-    if (result) {
-      prettyPrint(result)
-      logger.log('\n')
-    }
+  } finally {
+    await transport.close()
   }
 }
 
