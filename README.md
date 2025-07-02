@@ -53,6 +53,32 @@ npx @wong2/mcp-cli --url http://localhost:8000/mcp
 npx @wong2/mcp-cli --sse http://localhost:8000/sse
 ```
 
+### Non-interactive mode
+
+Run a specific tool, resource, or prompt without interactive prompts:
+
+```bash
+npx @wong2/mcp-cli --config config.json <primitive-name> [arguments-json]
+```
+
+Examples:
+
+```bash
+# Call a tool with arguments
+npx @wong2/mcp-cli -c config.json filesystem/read_file '{"path": "package.json"}'
+
+# Call a tool without arguments
+npx @wong2/mcp-cli -c config.json list_files
+
+# Use a prompt
+npx @wong2/mcp-cli -c config.json create_summary '{"text": "Hello world"}'
+
+# Read a resource
+npx @wong2/mcp-cli -c config.json file://path/to/resource
+```
+
+This mode is useful for scripting and automation, as it bypasses all interactive prompts and executes the specified primitive directly.
+
 ### Purge stored data (OAuth tokens, etc.)
 
 ```bash
