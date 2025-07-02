@@ -14,6 +14,7 @@ const cli = meow(
     $ mcp-cli [--pass-env] node path/to/server/index.js args...
     $ mcp-cli --url http://localhost:8000/mcp
     $ mcp-cli --sse http://localhost:8000/sse
+    $ mcp-cli --config [config.json] <primitive-name> [arguments-json]
     $ mcp-cli purge
 
 	Options
@@ -39,13 +40,18 @@ const cli = meow(
 
 if (cli.input[0] === 'purge') {
   purge()
-} else if (cli.input.length > 0) {
-  const [command, ...args] = cli.input
-  await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined)
 } else if (cli.flags.url) {
   await runWithURL(cli.flags.url)
 } else if (cli.flags.sse) {
   await runWithSSE(cli.flags.sse)
+} else if (cli.flags.config && cli.input.length > 0) {
+  // Non-interactive mode: mcp-cli --config config.json primitive-name [args-json]
+  const [primitiveName, argsJson] = cli.input
+  const args = argsJson ? JSON.parse(argsJson) : {}
+  await runWithConfig(cli.flags.config, primitiveName, args)
+} else if (cli.input.length > 0) {
+  const [command, ...args] = cli.input
+  await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined)
 } else {
   await runWithConfig(cli.flags.config)
 }

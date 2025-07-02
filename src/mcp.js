@@ -155,19 +155,85 @@ export async function runWithCommand(command, args, env) {
   await connectServer(transport)
 }
 
-export async function runWithConfig(configPath) {
+export async function runWithConfig(configPath, primitiveName, primitiveArgs) {
   const defaultConfigFile = getClaudeConfigPath()
   const config = await readConfig(configPath || defaultConfigFile)
   if (!config.mcpServers || isEmpty(config.mcpServers)) {
     throw new Error('No mcp servers found in config')
   }
-  const server = await pickServer(config)
+  
+  let server
+  if (primitiveName) {
+    // Non-interactive mode: use first server or find server with the primitive
+    const serverNames = Object.keys(config.mcpServers)
+    server = serverNames[0] // Default to first server for now
+  } else {
+    // Interactive mode
+    server = await pickServer(config)
+  }
+  
   const serverConfig = config.mcpServers[server]
   if (serverConfig.env) {
     serverConfig.env = { ...serverConfig.env, PATH: process.env.PATH }
   }
   const transport = new StdioClientTransport(serverConfig)
-  await connectServer(transport)
+  
+  if (primitiveName) {
+    await connectServerNonInteractive(transport, primitiveName, primitiveArgs)
+  } else {
+    await connectServer(transport)
+  }
+}
+
+async function connectServerNonInteractive(transport, primitiveName, primitiveArgs) {
+  const spinner = createSpinner('Connecting to server...')
+
+  let client
+  try {
+    client = await createClient()
+    await client.connect(transport)
+  } catch (err) {
+    spinner.stop()
+    throw err
+  }
+
+  const primitives = await listPrimitives(client)
+  spinner.success(`Connected, server capabilities: ${Object.keys(client.getServerCapabilities()).join(', ')}`)
+
+  // Find the primitive by name
+  const primitive = primitives.find(p => p.value.name === primitiveName)
+  if (!primitive) {
+    await client.close()
+    throw new Error(`Primitive '${primitiveName}' not found. Available primitives: ${primitives.map(p => p.value.name).join(', ')}`)
+  }
+
+  let result
+  let execSpinner
+  try {
+    if (primitive.type === 'resource') {
+      execSpinner = createSpinner(`Reading resource ${primitive.value.uri}...`)
+      result = await client.readResource({ uri: primitive.value.uri })
+    } else if (primitive.type === 'tool') {
+      execSpinner = createSpinner(`Using tool ${primitive.value.name}...`)
+      result = await client.callTool({ name: primitive.value.name, arguments: primitiveArgs })
+    } else if (primitive.type === 'prompt') {
+      execSpinner = createSpinner(`Using prompt ${primitive.value.name}...`)
+      result = await client.getPrompt({ name: primitive.value.name, arguments: primitiveArgs })
+    }
+    if (execSpinner) {
+      execSpinner.success()
+    }
+    if (result) {
+      prettyPrint(result)
+    }
+  } catch (err) {
+    if (execSpinner) {
+      execSpinner.error(err.message)
+    }
+    throw err
+  } finally {
+    await client.close()
+  }
 }
 
 async function connectRemoteServer(uri, initialTransport) {
