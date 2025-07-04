@@ -28,6 +28,7 @@
     "meow": "^13.2.0",
     "open": "^10.1.2",
     "prompts": "^2.4.2",
+    "uri-template": "^2.0.0",
     "yocto-spinner": "^0.2.2",
     "yoctocolors": "^2.1.1"
   }
