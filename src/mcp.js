@@ -17,6 +17,7 @@ import {
   createSpinner,
   getClaudeConfigPath,
   logger,
+  populateURITemplateParts,
   prettyPrint,
   readJSONSchemaInputs,
   readPromptArgumentInputs,
@@ -41,6 +42,14 @@ async function listPrimitives(client) {
       }),
     )
   }
+  promises.push(
+    client.listResourceTemplates().then(({ resourceTemplates }) => {
+      resourceTemplates.forEach((item) => primitives.push({
+        type: 'resource-template',
+        value: item
+      }))
+    })
+  )
   if (capabilities.tools) {
     promises.push(
       client.listTools().then(({ tools }) => {
@@ -102,6 +111,17 @@ async function connectServer(transport) {
         spinner.error(err.message)
         spinner = undefined
       })
+    } else if (primitive.type === 'resource-template') {
+      const expanded = await populateURITemplateParts(primitive.value.uriTemplate)
+      if (expanded !== null) {
+        spinner = createSpinner(`Reading resource ${expanded}...`)
+        result = await client.readResource({ uri: expanded }).catch((err) => {
+          spinner.error(err.message)
+          spinner = undefined
+        })
+      } else {
+        logger.log('\n')
+      }
     } else if (primitive.type === 'tool') {
       const args = await readJSONSchemaInputs(primitive.value.inputSchema)
       spinner = createSpinner(`Using tool ${primitive.value.name}...`)

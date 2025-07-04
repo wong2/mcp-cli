@@ -6,6 +6,8 @@ import { join } from 'path'
 import prompts from 'prompts'
 import yoctoSpinner from 'yocto-spinner'
 import colors from 'yoctocolors'
+import { parse } from "uri-template"
+import readline from 'readline';
 
 export const logger = new Console({ stdout: process.stderr, stderr: process.stderr })
 
@@ -78,4 +80,49 @@ export async function readJSONSchemaInputs(schema) {
     }
   }
   return results
+}
+
+export async function populateURITemplateParts(uriTemplate) {
+  // Populate template
+  const template = parse(uriTemplate)
+  let uri = "", values = {}
+  for (let part of template.ast.parts) {
+    if (part.type === "literal") {
+      uri += part.value
+    } else if (part.type == "expression") {
+      for (let variable of part.variables) {
+        values[variable.name] = await new Promise((res) => {
+          const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+          rl.question(
+            '  ' +
+            colors.bold(uriTemplate || '..') +
+            colors.dim(' | Constructed: ') +
+            colors.inverse(uri || '..') +
+            colors.dim(` | Enter value of \`${variable.name}': `),
+            value => {
+              rl.close();
+              res(value)
+            })
+        })
+      }
+    } else {
+      assert(false, "unreachable")
+    }
+  }
+  let expanded = template.expand(values)
+  expanded = await prompts(
+    {
+      name: 'confirm',
+      type: 'autocomplete',
+      message: 'Confirm:',
+      choices: [{ title: colors.bold(expanded), value: expanded }, { title: "Skip", value: null }],
+    },
+    {
+      onCancel: async () => {
+        await client.close()
+        process.exit(0)
+      },
+    },
+  )
+  return (expanded.confirm !== null && expanded.confirm !== "Skip") ? expanded.confirm : null;
 }
