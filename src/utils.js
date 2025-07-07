@@ -91,19 +91,15 @@ export async function populateURITemplateParts(uriTemplate) {
       uri += part.value
     } else if (part.type == "expression") {
       for (let variable of part.variables) {
-        values[variable.name] = await new Promise((res) => {
-          const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-          rl.question(
-            '  ' +
-            colors.bold(uriTemplate || '..') +
-            colors.dim(' | Constructed: ') +
+        const { value } = await prompts({
+          type: 'text',
+          name: 'value',
+          message: `Template: ${uriTemplate || '..'}\n` +
+            colors.dim('Constructed: ') +
             colors.inverse(uri || '..') +
             colors.dim(` | Enter value of \`${variable.name}': `),
-            value => {
-              rl.close();
-              res(value)
-            })
         })
+        values[variable.name] = value
       }
     } else {
       assert(false, "unreachable")
