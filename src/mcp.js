@@ -44,11 +44,13 @@ async function listPrimitives(client) {
   }
   promises.push(
     client.listResourceTemplates().then(({ resourceTemplates }) => {
-      resourceTemplates.forEach((item) => primitives.push({
-        type: 'resource-template',
-        value: item
-      }))
-    })
+      resourceTemplates.forEach((item) =>
+        primitives.push({
+          type: 'resource-template',
+          value: item,
+        }),
+      )
+    }),
   )
   if (capabilities.tools) {
     promises.push(
@@ -176,7 +178,11 @@ async function pickServer(config) {
 
 export async function runWithCommand(command, args, env) {
   const transport = new StdioClientTransport({ command, args, env })
-  await connectServer(transport)
+  try {
+    await connectServer(transport)
+  } finally {
+    await transport.close()
+  }
 }
 
 export async function runWithConfigNonInteractive(configPath, serverName, command, target, argsString) {
@@ -239,7 +245,11 @@ export async function runWithConfig(configPath) {
     serverConfig.env = { ...serverConfig.env, PATH: process.env.PATH }
   }
   const transport = new StdioClientTransport(serverConfig)
-  await connectServer(transport)
+  try {
+    await connectServer(transport)
+  } finally {
+    await transport.close()
+  }
 }
 
 async function connectRemoteServer(uri, initialTransport) {
