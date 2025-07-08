@@ -147,9 +147,13 @@ async function connectServer(transport) {
   }
 }
 
-async function readConfig(configFilePath) {
+async function readConfig(configFilePath, { silent = false } = {}) {
   if (!configFilePath || !existsSync(configFilePath)) {
     throw new Error(`Config file not found: ${configFilePath}`)
+  }
+  if (silent) {
+    const config = await readFile(configFilePath, 'utf-8')
+    return JSON.parse(config)
   }
   const spinner = createSpinner(`Loading config from ${configFilePath}`)
   const config = await readFile(configFilePath, 'utf-8')
@@ -173,6 +177,54 @@ async function pickServer(config) {
 export async function runWithCommand(command, args, env) {
   const transport = new StdioClientTransport({ command, args, env })
   await connectServer(transport)
+}
+
+export async function runWithConfigNonInteractive(configPath, serverName, command, target, argsString) {
+  try {
+    const defaultConfigFile = getClaudeConfigPath()
+    const config = await readConfig(configPath || defaultConfigFile, { silent: true })
+    if (!config.mcpServers || isEmpty(config.mcpServers)) {
+      throw new Error('No mcp servers found in config')
+    }
+
+    const serverConfig = config.mcpServers[serverName]
+    if (!serverConfig) {
+      throw new Error(`Server '${serverName}' not found in config`)
+    }
+
+    if (serverConfig.env) {
+      serverConfig.env = { ...serverConfig.env, PATH: process.env.PATH }
+    }
+
+    const transport = new StdioClientTransport(serverConfig)
+    const client = await createClient()
+    await client.connect(transport)
+
+    let result
+    let args = {}
+
+    if (argsString) {
+      try {
+        args = JSON.parse(argsString)
+      } catch (err) {
+        throw new Error(`Invalid JSON in --args: ${err.message}`)
+      }
+    }
+
+    if (command === 'call-tool') {
+      result = await client.callTool({ name: target, arguments: args })
+    } else if (command === 'read-resource') {
+      result = await client.readResource({ uri: target })
+    } else if (command === 'get-prompt') {
+      result = await client.getPrompt({ name: target, arguments: args })
+    }
+
+    await client.close()
+    console.log(JSON.stringify(result, null, 2))
+  } catch (err) {
+    console.error(JSON.stringify({ error: err.message }, null, 2))
+    process.exit(1)
+  }
 }
 
 export async function runWithConfig(configPath) {
