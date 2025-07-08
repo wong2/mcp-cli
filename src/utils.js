@@ -4,10 +4,9 @@ import { Console } from 'node:console'
 import { homedir } from 'os'
 import { join } from 'path'
 import prompts from 'prompts'
+import { parse } from 'uri-template'
 import yoctoSpinner from 'yocto-spinner'
 import colors from 'yoctocolors'
-import { parse } from "uri-template"
-import readline from 'readline';
 
 export const logger = new Console({ stdout: process.stderr, stderr: process.stderr })
 
@@ -83,42 +82,31 @@ export async function readJSONSchemaInputs(schema) {
 }
 
 export async function populateURITemplateParts(uriTemplate) {
-  // Populate template
   const template = parse(uriTemplate)
-  let uri = "", values = {}
-  for (let part of template.ast.parts) {
-    if (part.type === "literal") {
+  let uri = ''
+  const values = {}
+  logger.log('Constructing URI template:', colors.underline(uriTemplate))
+  for (const part of template.ast.parts) {
+    if (part.type === 'literal') {
       uri += part.value
-    } else if (part.type == "expression") {
-      for (let variable of part.variables) {
+    } else if (part.type === 'expression') {
+      for (const variable of part.variables) {
         const { value } = await prompts({
           type: 'text',
           name: 'value',
-          message: `Template: ${uriTemplate || '..'}\n` +
-            colors.dim('Constructed: ') +
-            colors.inverse(uri || '..') +
-            colors.dim(` | Enter value of \`${variable.name}': `),
+          message: variable.name,
         })
         values[variable.name] = value
       }
-    } else {
-      assert(false, "unreachable")
     }
   }
-  let expanded = template.expand(values)
-  expanded = await prompts(
-    {
-      name: 'confirm',
-      type: 'autocomplete',
-      message: 'Confirm:',
-      choices: [{ title: colors.bold(expanded), value: expanded }, { title: "Skip", value: null }],
-    },
-    {
-      onCancel: async () => {
-        await client.close()
-        process.exit(0)
-      },
-    },
-  )
-  return (expanded.confirm !== null && expanded.confirm !== "Skip") ? expanded.confirm : null;
+  const expanded = template.expand(values)
+  logger.info('Constructed resource URI:', colors.underline(expanded))
+  const result = await prompts({
+    name: 'value',
+    type: 'confirm',
+    message: 'Confirm resource URI?',
+    initial: true,
+  })
+  return result.value ? expanded : null
 }
