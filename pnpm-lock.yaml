@@ -38,6 +38,9 @@ importers:
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
+      uri-template:
+        specifier: ^2.0.0
+        version: 2.0.0
       yocto-spinner:
         specifier: ^0.2.2
         version: 0.2.2
@@ -397,6 +400,9 @@ packages:
     resolution: {integrity: sha512-TdrF7fW9Rphjq4RjrW0Kp2AW0Ahwu9sRGTkS6bvDi0SCwZlEZYmcfDbEsTz8RVk0EHIS/Vd1bv3JhG+1xZuAyQ==, tarball: https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-8.2.0.tgz}
     engines: {node: '>=16'}
 
+  pct-encode@1.0.3:
+    resolution: {integrity: sha512-+ojEvSHApoLWF2YYxwnOM4N9DPn5e5fG+j0YJ9drKNaYtrZYOq5M9ESOaBYqOHCXOAALODJJ4wkqHAXEuLpwMw==}
+
   pkce-challenge@5.0.0:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==, tarball: https://registry.npmjs.org/pkce-challenge/-/pkce-challenge-5.0.0.tgz}
     engines: {node: '>=16.20.0'}
@@ -517,6 +523,8 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
+  uri-template@2.0.0:
+    resolution: {integrity: sha512-r/i44nPoo0ktEZDjx+hxp9PSjQuBBfsd6RgCRuuMqCP0FZEp+YE0SpihThI4UGc5ePqQEFsdyZc7UVlowp+LLw==}
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==, tarball: https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz}
 
@@ -904,6 +912,8 @@ snapshots:
 
   path-to-regexp@8.2.0: {}
 
+  pct-encode@1.0.3: {}
+
   pkce-challenge@5.0.0: {}
 
   prompts@2.4.2:
@@ -1049,6 +1059,9 @@ snapshots:
 
   unpipe@1.0.0: {}
 
+  uri-template@2.0.0:
+    dependencies:
+      pct-encode: 1.0.3
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
