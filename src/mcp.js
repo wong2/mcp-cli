@@ -41,17 +41,17 @@ async function listPrimitives(client) {
         resources.forEach((item) => primitives.push({ type: 'resource', value: item }))
       }),
     )
+    promises.push(
+      client.listResourceTemplates().then(({ resourceTemplates }) => {
+        resourceTemplates.forEach((item) =>
+          primitives.push({
+            type: 'resource-template',
+            value: item,
+          }),
+        )
+      }),
+    )
   }
-  promises.push(
-    client.listResourceTemplates().then(({ resourceTemplates }) => {
-      resourceTemplates.forEach((item) =>
-        primitives.push({
-          type: 'resource-template',
-          value: item,
-        }),
-      )
-    }),
-  )
   if (capabilities.tools) {
     promises.push(
       client.listTools().then(({ tools }) => {

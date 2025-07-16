@@ -12,8 +12,8 @@ importers:
         specifier: ^1.10.4
         version: 1.10.4
       '@modelcontextprotocol/sdk':
-        specifier: ^1.15.0
-        version: 1.15.0
+        specifier: ^1.15.1
+        version: 1.15.1
       conf:
         specifier: ^13.1.0
         version: 13.1.0
@@ -53,8 +53,8 @@ packages:
   '@json-schema-tools/traverse@1.10.4':
     resolution: {integrity: sha512-9e42zjhLIxzBONroNC4SGsTqdB877tzwH2S6lqgTav9K24kWJR9vNieeMVSuyqnY8FlclH21D8wsm/tuD9WA9Q==}
 
-  '@modelcontextprotocol/sdk@1.15.0':
-    resolution: {integrity: sha512-67hnl/ROKdb03Vuu0YOr+baKTvf1/5YBHBm9KnZdjdAh8hjt4FRCPD5ucwxGB237sBpzlqQsLy1PFu7z/ekZ9Q==, tarball: https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.15.0.tgz}
+  '@modelcontextprotocol/sdk@1.15.1':
+    resolution: {integrity: sha512-W/XlN9c528yYn+9MQkVjxiTPgPxoxt+oczfjHBDsJx0+59+O7B75Zhsp0B16Xbwbz8ANISDajh6+V7nIcPMc5w==, tarball: https://registry.npmjs.org/@modelcontextprotocol/sdk/-/sdk-1.15.1.tgz}
     engines: {node: '>=18'}
 
   accepts@2.0.0:
@@ -201,15 +201,19 @@ packages:
     resolution: {integrity: sha512-VARTJ9CYeuQYb0pZEPbzi740OWFgpHe7AYJ2WFZVnUDUQp5Dk2yJUgF36YsZ81cOyxT0QxmXD2EQpapAouzWVA==, tarball: https://registry.npmjs.org/eventsource-parser/-/eventsource-parser-3.0.1.tgz}
     engines: {node: '>=18.0.0'}
 
+  eventsource-parser@3.0.3:
+    resolution: {integrity: sha512-nVpZkTMM9rF6AQ9gPJpFsNAMt48wIzB5TQgiTLdHiuO8XEDhUgZEhqKlZWXbIzo9VmJ/HvysHqEaVeD5v9TPvA==, tarball: https://registry.npmjs.org/eventsource-parser/-/eventsource-parser-3.0.3.tgz}
+    engines: {node: '>=20.0.0'}
+
   eventsource@3.0.6:
     resolution: {integrity: sha512-l19WpE2m9hSuyP06+FbuUUf1G+R0SFLrtQfbRb9PRr+oimOfxQhgGCbVaXg5IvZyyTThJsxh6L/srkMiCeBPDA==, tarball: https://registry.npmjs.org/eventsource/-/eventsource-3.0.6.tgz}
     engines: {node: '>=18.0.0'}
 
-  express-rate-limit@7.5.0:
-    resolution: {integrity: sha512-eB5zbQh5h+VenMPM3fh+nw1YExi5nMr6HUCR62ELSP11huvxm/Uir1H1QEyTkk5QX6A58pX6NmaTMceKZ0Eodg==, tarball: https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-7.5.0.tgz}
+  express-rate-limit@7.5.1:
+    resolution: {integrity: sha512-7iN8iPMDzOMHPUYllBEsQdWVB6fPDMPqwjBaFrgr4Jgr/+okjvzAy+UHlYYL/Vs0OsOrMkwS6PJDkFlJwoxUnw==, tarball: https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-7.5.1.tgz}
     engines: {node: '>= 16'}
     peerDependencies:
-      express: ^4.11 || 5 || ^5.0.0-beta.1
+      express: '>= 4.11'
 
   express@5.1.0:
     resolution: {integrity: sha512-DT9ck5YIRU+8GYzzU5kT3eHGA5iL+1Zd0EutOmTE9Dtk+Tvuzd23VBU+ec7HPNSTxXYO55gPV/hq4pSBJDjFpA==, tarball: https://registry.npmjs.org/express/-/express-5.1.0.tgz}
@@ -523,10 +527,11 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
-  uri-template@2.0.0:
-    resolution: {integrity: sha512-r/i44nPoo0ktEZDjx+hxp9PSjQuBBfsd6RgCRuuMqCP0FZEp+YE0SpihThI4UGc5ePqQEFsdyZc7UVlowp+LLw==}
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==, tarball: https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz}
+
+  uri-template@2.0.0:
+    resolution: {integrity: sha512-r/i44nPoo0ktEZDjx+hxp9PSjQuBBfsd6RgCRuuMqCP0FZEp+YE0SpihThI4UGc5ePqQEFsdyZc7UVlowp+LLw==}
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==, tarball: https://registry.npmjs.org/vary/-/vary-1.1.2.tgz}
@@ -551,32 +556,32 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
-  zod-to-json-schema@3.24.3:
-    resolution: {integrity: sha512-HIAfWdYIt1sssHfYZFCXp4rU1w2r8hVVXYIlmoa0r0gABLs5di3RCqPU5DDROogVz1pAdYBaz7HK5n9pSUNs3A==, tarball: https://registry.npmjs.org/zod-to-json-schema/-/zod-to-json-schema-3.24.3.tgz}
+  zod-to-json-schema@3.24.6:
+    resolution: {integrity: sha512-h/z3PKvcTcTetyjl1fkj79MHNEjm+HpD6NXheWjzOekY7kV+lwDYnHw+ivHkijnCSMz1yJaWBD9vu/Fcmk+vEg==, tarball: https://registry.npmjs.org/zod-to-json-schema/-/zod-to-json-schema-3.24.6.tgz}
     peerDependencies:
       zod: ^3.24.1
 
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==, tarball: https://registry.npmjs.org/zod/-/zod-3.24.2.tgz}
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==, tarball: https://registry.npmjs.org/zod/-/zod-3.25.76.tgz}
 
 snapshots:
 
   '@json-schema-tools/traverse@1.10.4': {}
 
-  '@modelcontextprotocol/sdk@1.15.0':
+  '@modelcontextprotocol/sdk@1.15.1':
     dependencies:
       ajv: 6.12.6
       content-type: 1.0.5
       cors: 2.8.5
       cross-spawn: 7.0.6
       eventsource: 3.0.6
-      eventsource-parser: 3.0.1
+      eventsource-parser: 3.0.3
       express: 5.1.0
-      express-rate-limit: 7.5.0(express@5.1.0)
+      express-rate-limit: 7.5.1(express@5.1.0)
       pkce-challenge: 5.0.0
       raw-body: 3.0.0
-      zod: 3.24.2
-      zod-to-json-schema: 3.24.3(zod@3.24.2)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.6(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
 
@@ -722,11 +727,13 @@ snapshots:
 
   eventsource-parser@3.0.1: {}
 
+  eventsource-parser@3.0.3: {}
+
   eventsource@3.0.6:
     dependencies:
       eventsource-parser: 3.0.1
 
-  express-rate-limit@7.5.0(express@5.1.0):
+  express-rate-limit@7.5.1(express@5.1.0):
     dependencies:
       express: 5.1.0
 
@@ -1059,12 +1066,13 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  uri-template@2.0.0:
-    dependencies:
-      pct-encode: 1.0.3
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  uri-template@2.0.0:
+    dependencies:
+      pct-encode: 1.0.3
 
   vary@1.1.2: {}
 
@@ -1082,8 +1090,8 @@ snapshots:
 
   yoctocolors@2.1.1: {}
 
-  zod-to-json-schema@3.24.3(zod@3.24.2):
+  zod-to-json-schema@3.24.6(zod@3.25.76):
     dependencies:
-      zod: 3.24.2
+      zod: 3.25.76
 
-  zod@3.24.2: {}
+  zod@3.25.76: {}
