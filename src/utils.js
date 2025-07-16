@@ -1,5 +1,5 @@
 import traverse from '@json-schema-tools/traverse'
-import { isEmpty, set as setPath } from 'lodash-es'
+import { isEmpty, set as setPath, truncate } from 'lodash-es'
 import { Console } from 'node:console'
 import { homedir } from 'os'
 import { join } from 'path'
@@ -109,4 +109,12 @@ export async function populateURITemplateParts(uriTemplate) {
     initial: true,
   })
   return result.value ? expanded : null
+}
+
+export function formatDescription(description, compact = false) {
+  if (!description || !compact) {
+    return description || ''
+  }
+  const normalized = description.replace(/\s+/g, ' ').trim()
+  return truncate(normalized, { length: 100 })
 }

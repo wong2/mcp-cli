@@ -15,6 +15,7 @@ import { OAuthCallbackServer } from './oauth/callback.js'
 import { McpOAuthClientProvider } from './oauth/provider.js'
 import {
   createSpinner,
+  formatDescription,
   getClaudeConfigPath,
   logger,
   populateURITemplateParts,
@@ -70,7 +71,7 @@ async function listPrimitives(client) {
   return primitives
 }
 
-async function connectServer(transport) {
+async function connectServer(transport, options = {}) {
   const spinner = createSpinner('Connecting to server...')
 
   let client
@@ -93,7 +94,7 @@ async function connectServer(transport) {
         message: 'Pick a primitive',
         choices: primitives.map((p) => ({
           title: colors.bold(p.type + '(' + p.value.name + ')'),
-          description: p.value.description,
+          description: formatDescription(p.value.description, options.compact),
           value: p,
         })),
       },
@@ -176,10 +177,10 @@ async function pickServer(config) {
   return server
 }
 
-export async function runWithCommand(command, args, env) {
+export async function runWithCommand(command, args, env, options = {}) {
   const transport = new StdioClientTransport({ command, args, env })
   try {
-    await connectServer(transport)
+    await connectServer(transport, options)
   } finally {
     await transport.close()
   }
@@ -233,7 +234,7 @@ export async function runWithConfigNonInteractive(configPath, serverName, comman
   }
 }
 
-export async function runWithConfig(configPath) {
+export async function runWithConfig(configPath, options = {}) {
   const defaultConfigFile = getClaudeConfigPath()
   const config = await readConfig(configPath || defaultConfigFile)
   if (!config.mcpServers || isEmpty(config.mcpServers)) {
@@ -246,13 +247,13 @@ export async function runWithConfig(configPath) {
   }
   const transport = new StdioClientTransport(serverConfig)
   try {
-    await connectServer(transport)
+    await connectServer(transport, options)
   } finally {
     await transport.close()
   }
 }
 
-async function connectRemoteServer(uri, initialTransport) {
+async function connectRemoteServer(uri, initialTransport, options = {}) {
   const oauthConfig = { port: await getPort({ port: 49153 }), path: '/oauth/callback' }
   const createTransport = () => {
     const serverId = crypto.createHash('sha256').update(uri).digest('hex')
@@ -262,7 +263,7 @@ async function connectRemoteServer(uri, initialTransport) {
   }
   const transport = createTransport()
   try {
-    await connectServer(transport)
+    await connectServer(transport, options)
   } catch (err) {
     if (!(err instanceof UnauthorizedError)) {
       throw err
@@ -273,14 +274,14 @@ async function connectRemoteServer(uri, initialTransport) {
     await transport.finishAuth(authCode)
     spinner.success('Authorization successful')
     // connect again with a new transport
-    await connectServer(createTransport())
+    await connectServer(createTransport(), options)
   }
 }
 
-export async function runWithSSE(uri) {
-  await connectRemoteServer(uri, (authProvider) => new SSEClientTransport(new URL(uri), { authProvider }))
+export async function runWithSSE(uri, options = {}) {
+  await connectRemoteServer(uri, (authProvider) => new SSEClientTransport(new URL(uri), { authProvider }), options)
 }
 
-export async function runWithURL(uri) {
-  await connectRemoteServer(uri, (authProvider) => new StreamableHTTPClientTransport(new URL(uri), { authProvider }))
+export async function runWithURL(uri, options = {}) {
+  await connectRemoteServer(uri, (authProvider) => new StreamableHTTPClientTransport(new URL(uri), { authProvider }), options)
 }

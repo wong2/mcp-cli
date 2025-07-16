@@ -22,6 +22,7 @@ const cli = meow(
 	Options
 	  --config, -c    Path to the config file
     --pass-env, -e  Pass environment variables in current shell to stdio server
+    --compact, -t   Truncate primitive descriptions to single line (max 100 chars)
     --url           Streamable HTTP endpoint
     --sse           SSE endpoint
     --args          JSON arguments for tools and prompts (non-interactive mode)
@@ -37,12 +38,18 @@ const cli = meow(
         type: 'boolean',
         shortFlag: 'e',
       },
+      compact: {
+        type: 'boolean',
+        shortFlag: 't',
+      },
       args: {
         type: 'string',
       },
     },
   },
 )
+
+const options = { compact: cli.flags.compact }
 
 if (cli.input[0] === 'purge') {
   purge()
@@ -56,11 +63,11 @@ if (cli.input[0] === 'purge') {
   await runWithConfigNonInteractive(cli.flags.config, serverName, command, target, cli.flags.args)
 } else if (cli.input.length > 0) {
   const [command, ...args] = cli.input
-  await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined)
+  await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined, options)
 } else if (cli.flags.url) {
-  await runWithURL(cli.flags.url)
+  await runWithURL(cli.flags.url, options)
 } else if (cli.flags.sse) {
-  await runWithSSE(cli.flags.sse)
+  await runWithSSE(cli.flags.sse, options)
 } else {
-  await runWithConfig(cli.flags.config)
+  await runWithConfig(cli.flags.config, options)
 }
