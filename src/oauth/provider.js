@@ -2,6 +2,7 @@
 
 import open from 'open'
 import { config } from '../config.js'
+import { sanitizeUrl } from 'strict-url-sanitise'
 
 /** @typedef {import("@modelcontextprotocol/sdk/client/auth.js").OAuthClientProvider} OAuthClientProvider */
 /** @implements {OAuthClientProvider} */
@@ -39,7 +40,7 @@ export class McpOAuthClientProvider {
   }
 
   async redirectToAuthorization(authorizationUrl) {
-    await open(authorizationUrl.toString())
+    await open(sanitizeUrl(authorizationUrl.toString()))
   }
 
   async codeVerifier() {
