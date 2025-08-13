@@ -218,7 +218,9 @@ export async function runWithConfigNonInteractive(configPath, serverName, comman
       }
     }
 
-    if (command === 'call-tool') {
+    if (command === 'list-tools') {
+      result = await client.listTools()
+    } else if (command === 'call-tool') {
       result = await client.callTool({ name: target, arguments: args })
     } else if (command === 'read-resource') {
       result = await client.readResource({ uri: target })
