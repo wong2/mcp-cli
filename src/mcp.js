@@ -312,14 +312,27 @@ export async function runWithConfig(configPath, options = {}) {
   }
   const server = await pickServer(config)
   const serverConfig = config.mcpServers[server]
-  if (serverConfig.env) {
-    serverConfig.env = { ...serverConfig.env, PATH: process.env.PATH }
-  }
-  const transport = new StdioClientTransport(serverConfig)
-  try {
-    await connectServer(transport, options)
-  } finally {
-    await transport.close()
+  
+  // Check if this is a URL/SSE server or stdio server
+  if (serverConfig.url) {
+    // URL-based server from config - use HTTP transport
+    await connectRemoteServer(
+      serverConfig.url,
+      (authProvider) => createHTTPTransport(serverConfig.url, authProvider),
+      null,
+      options
+    )
+  } else {
+    // Stdio server from config
+    if (serverConfig.env) {
+      serverConfig.env = { ...serverConfig.env, PATH: process.env.PATH }
+    }
+    const transport = new StdioClientTransport(serverConfig)
+    try {
+      await connectServer(transport, options)
+    } finally {
+      await transport.close()
+    }
   }
 }
 
