@@ -79,6 +79,42 @@ npx @wong2/mcp-cli -c config.json get-prompt filesystem:create_summary --args '{
 
 This mode is useful for scripting and automation, as it bypasses all interactive prompts and executes the specified primitive directly.
 
+### List server capabilities
+
+Inspect server capabilities without entering interactive mode:
+
+```bash
+# List all tools with descriptions
+npx @wong2/mcp-cli [--config config.json] list-tools <server-name>
+
+# List all resources and resource templates  
+npx @wong2/mcp-cli [--config config.json] list-resources <server-name>
+
+# List all prompts with arguments
+npx @wong2/mcp-cli [--config config.json] list-prompts <server-name>
+
+# Show overview of all server capabilities
+npx @wong2/mcp-cli [--config config.json] list-all <server-name>
+```
+
+Examples:
+
+```bash
+# Server from config file
+npx @wong2/mcp-cli list-tools sqlite
+
+# Direct stdio server 
+npx @wong2/mcp-cli list-tools npx @modelcontextprotocol/server-sqlite /path/to/db
+
+# Remote server via URL
+npx @wong2/mcp-cli --url http://localhost:8000/mcp list-resources
+
+# JSON output for scripting
+npx @wong2/mcp-cli list-all sqlite --json
+```
+
+These commands are useful for exploring server capabilities and scripting automation workflows.
+
 ### Purge stored data (OAuth tokens, etc.)
 
 ```bash
