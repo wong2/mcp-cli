@@ -87,13 +87,13 @@ async function listPrimitives(client, filter = null) {
     resourceTemplates: []
   }
   
-  if (filter === 'all' || filter === 'tools') {
+  if (shouldInclude(filter, 'tools')) {
     result.tools = rawData.tools
   }
-  if (filter === 'all' || filter === 'prompts') {
+  if (shouldInclude(filter, 'prompts')) {
     result.prompts = rawData.prompts
   }
-  if (filter === 'all' || filter === 'resources') {
+  if (shouldInclude(filter, 'resources')) {
     result.resources = rawData.resources
     result.resourceTemplates = rawData.resourceTemplates
   }
