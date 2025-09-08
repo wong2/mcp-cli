@@ -11,7 +11,15 @@
     "src",
     "README.md"
   ],
-  "scripts": {},
+  "scripts": {
+    "server:stdio": "node test/servers/stdio-server.js",
+    "server:http": "node test/servers/http-server.js",
+    "server:sse": "node test/servers/sse-server.js",
+    "server:help": "echo 'Available servers: stdio (pnpm run server:stdio), http (pnpm run server:http), sse (pnpm run server:sse)'",
+    "test:stdio": "node src/cli.js node test/servers/stdio-server.js",
+    "test:http": "node src/cli.js --url http://localhost:9100/mcp",
+    "test:sse": "node src/cli.js --sse http://localhost:9101/sse"
+  },
   "keywords": [
     "MCP"
   ],

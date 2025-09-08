@@ -85,6 +85,10 @@ This mode is useful for scripting and automation, as it bypasses all interactive
 npx @wong2/mcp-cli purge
 ```
 
+## Development
+
+- See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup and workflow
+
 ## Related
 
 - [mcpservers.org](https://mcpservers.org) - A curated list of MCP servers
