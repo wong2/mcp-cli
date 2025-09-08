@@ -6,7 +6,7 @@ import { join } from 'path'
 import prompts from 'prompts'
 import { createSpinner } from '../utils.js'
 
-function getDefaultConfigPath(cliConfigPath) {
+function resolveConfigPath(cliConfigPath) {
   // Priority: CLI arg → env var → platform default
   if (cliConfigPath) {
     return cliConfigPath
@@ -55,7 +55,7 @@ Expected: { "mcpServers": { "server-name": { "command": "...", "args": [...] } }
 }
 
 export async function loadConfig(configPath, { silent = false } = {}) {
-  const resolvedPath = getDefaultConfigPath(configPath)
+  const resolvedPath = resolveConfigPath(configPath)
   
   if (!resolvedPath) {
     throw new Error('No config file path provided')
