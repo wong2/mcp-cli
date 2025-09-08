@@ -6,7 +6,17 @@ import { join } from 'path'
 import prompts from 'prompts'
 import { createSpinner } from '../utils.js'
 
-function getDefaultConfigPath() {
+function getDefaultConfigPath(cliConfigPath) {
+  // Priority: CLI arg → env var → platform default
+  if (cliConfigPath) {
+    return cliConfigPath
+  }
+  
+  const envConfigPath = process.env.MCP_CLI_CONFIG
+  if (envConfigPath) {
+    return envConfigPath
+  }
+  
   if (process.platform === 'win32') {
     return join(homedir(), 'AppData', 'Roaming', 'Claude', 'claude_desktop_config.json')
   }
@@ -45,8 +55,7 @@ Expected: { "mcpServers": { "server-name": { "command": "...", "args": [...] } }
 }
 
 export async function loadConfig(configPath, { silent = false } = {}) {
-  // Resolve config path with priority: CLI arg → env var → default
-  const resolvedPath = configPath || process.env.MCP_CLI_CONFIG || getDefaultConfigPath()
+  const resolvedPath = getDefaultConfigPath(configPath)
   
   if (!resolvedPath) {
     throw new Error('No config file path provided')
