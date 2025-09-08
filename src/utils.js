@@ -6,8 +6,6 @@ import { parse } from 'uri-template'
 import yoctoSpinner from 'yocto-spinner'
 import colors from 'yoctocolors'
 
-// Re-export for backward compatibility
-export { getClaudeConfigPath } from './config/index.js'
 
 export const logger = new Console({ stdout: process.stderr, stderr: process.stderr })
 

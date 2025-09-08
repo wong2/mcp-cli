@@ -23,10 +23,8 @@ import {
   readPromptArgumentInputs,
 } from './utils.js'
 import {
+  loadConfig,
   pickServer,
-  readConfig,
-  resolveConfigPath,
-  validateConfigStructure,
 } from './config/index.js'
 
 
@@ -168,8 +166,7 @@ export async function runWithCommand(command, args, env, options = {}) {
 
 export async function runWithConfigNonInteractive(configPath, serverName, command, target, argsString) {
   try {
-    const resolvedConfigPath = resolveConfigPath(configPath)
-    const config = await readConfig(resolvedConfigPath, { silent: true })
+    const config = await loadConfig(configPath, { silent: true })
 
     const serverConfig = config.mcpServers[serverName]
     if (!serverConfig) {
@@ -212,8 +209,7 @@ export async function runWithConfigNonInteractive(configPath, serverName, comman
 }
 
 export async function runWithConfig(configPath, options = {}) {
-  const resolvedConfigPath = resolveConfigPath(configPath)
-  const config = await readConfig(resolvedConfigPath)
+  const config = await loadConfig(configPath)
   const server = await pickServer(config)
   const serverConfig = config.mcpServers[server]
   if (serverConfig.env) {
