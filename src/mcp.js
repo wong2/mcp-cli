@@ -136,28 +136,24 @@ async function connectServer(transport, options = {}) {
   // Build choices array from the consistent data structure
   const choices = []
   data.tools.forEach((item) => choices.push({ 
-    type: 'tool', 
-    value: item,
     title: colors.bold('tool(' + item.name + ')'),
-    description: formatDescription(item.description, options.compact)
+    description: formatDescription(item.description, options.compact),
+    value: { type: 'tool', value: item }
   }))
   data.resources.forEach((item) => choices.push({ 
-    type: 'resource', 
-    value: item,
     title: colors.bold('resource(' + item.name + ')'),
-    description: formatDescription(item.description, options.compact)
+    description: formatDescription(item.description, options.compact),
+    value: { type: 'resource', value: item }
   }))
   data.resourceTemplates.forEach((item) => choices.push({ 
-    type: 'resource-template', 
-    value: item,
     title: colors.bold('resource-template(' + item.name + ')'),
-    description: formatDescription(item.description, options.compact)
+    description: formatDescription(item.description, options.compact),
+    value: { type: 'resource-template', value: item }
   }))
   data.prompts.forEach((item) => choices.push({ 
-    type: 'prompt', 
-    value: item,
     title: colors.bold('prompt(' + item.name + ')'),
-    description: formatDescription(item.description, options.compact)
+    description: formatDescription(item.description, options.compact),
+    value: { type: 'prompt', value: item }
   }))
 
   while (true) {
