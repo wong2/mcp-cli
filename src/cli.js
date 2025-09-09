@@ -2,7 +2,7 @@
 
 import meow from 'meow'
 import './eventsource-polyfill.js'
-import { runWithCommand, runWithConfig, runWithConfigNonInteractive, runWithSSE, runWithURL } from './mcp.js'
+import { runWithCommand, runWithConfig, runWithConfigNonInteractive, runWithSSE, runWithURL, runListCommand, LIST_COMMANDS } from './mcp.js'
 import { purge } from './config.js'
 
 const cli = meow(
@@ -18,6 +18,10 @@ const cli = meow(
     $ mcp-cli [--config config.json] call-tool <server_name>:<tool_name> [--args '{"key":"value"}']
     $ mcp-cli [--config config.json] read-resource <server_name>:<resource_uri>
     $ mcp-cli [--config config.json] get-prompt <server_name>:<prompt_name> [--args '{"key":"value"}']
+    $ mcp-cli [--config config.json] list-tools <server_name>
+    $ mcp-cli [--config config.json] list-resources <server_name>
+    $ mcp-cli [--config config.json] list-prompts <server_name>
+    $ mcp-cli [--config config.json] list-all <server_name>
 
 	Options
 	  --config, -c    Path to the config file
@@ -26,6 +30,7 @@ const cli = meow(
     --url           Streamable HTTP endpoint
     --sse           SSE endpoint
     --args          JSON arguments for tools and prompts (non-interactive mode)
+    --json          Output results in JSON format (for list commands)
 `,
   {
     importMeta: import.meta,
@@ -45,14 +50,25 @@ const cli = meow(
       args: {
         type: 'string',
       },
+      json: {
+        type: 'boolean',
+      },
     },
   },
 )
 
-const options = { compact: cli.flags.compact }
+const options = { compact: cli.flags.compact, json: cli.flags.json }
+
+function isListCommand(command) {
+  return command in LIST_COMMANDS
+}
 
 if (cli.input[0] === 'purge') {
   purge()
+} else if (cli.input.length >= 2 && isListCommand(cli.input[0])) {
+  // Non-interactive list mode: mcp-cli [--config config.json] <list-command> <server-name>
+  const [command, serverName] = cli.input
+  await runListCommand(cli.flags.config, serverName, command, options)
 } else if (
   cli.input.length >= 2 &&
   (cli.input[0] === 'call-tool' || cli.input[0] === 'read-resource' || cli.input[0] === 'get-prompt')
@@ -61,13 +77,19 @@ if (cli.input[0] === 'purge') {
   const [command, serverTarget] = cli.input
   const [serverName, target] = serverTarget.split(':')
   await runWithConfigNonInteractive(cli.flags.config, serverName, command, target, cli.flags.args)
+} else if (cli.flags.url || cli.flags.sse) {
+  const endpoint = cli.flags.url || cli.flags.sse
+  const transportType = cli.flags.url ? 'url' : 'sse'
+  
+  if (cli.input.length >= 1 && isListCommand(cli.input[0])) {
+    await runListCommand(null, null, cli.input[0], { ...options, [transportType]: endpoint })
+  } else {
+    const runner = cli.flags.url ? runWithURL : runWithSSE
+    await runner(endpoint, options)
+  }
 } else if (cli.input.length > 0) {
   const [command, ...args] = cli.input
   await runWithCommand(command, args, cli.flags.passEnv ? process.env : undefined, options)
-} else if (cli.flags.url) {
-  await runWithURL(cli.flags.url, options)
-} else if (cli.flags.sse) {
-  await runWithSSE(cli.flags.sse, options)
 } else {
   await runWithConfig(cli.flags.config, options)
 }
