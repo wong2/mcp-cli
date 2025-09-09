@@ -1,10 +1,10 @@
-import { isEmpty } from 'lodash-es'
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { homedir } from 'os'
 import { join } from 'path'
 import prompts from 'prompts'
 import { createSpinner } from '../utils.js'
+import { ConfigSchema, formatZodError } from './schema.js'
 
 function resolveConfigPath(cliConfigPath) {
   // Priority: CLI arg → env var → platform default
@@ -26,32 +26,13 @@ function resolveConfigPath(cliConfigPath) {
 }
 
 function validateConfig(config, configFilePath) {
-  if (!config || typeof config !== 'object' || Array.isArray(config)) {
-    throw new Error(`Config file must contain a JSON object: ${configFilePath}`)
+  const result = ConfigSchema.safeParse(config)
+  
+  if (!result.success) {
+    throw new Error(formatZodError(result.error, configFilePath))
   }
   
-  if (!config.mcpServers) {
-    throw new Error(`Config missing 'mcpServers' section: ${configFilePath}
-Expected: { "mcpServers": { "server-name": { "command": "...", "args": [...] } } }`)
-  }
-  
-  if (typeof config.mcpServers !== 'object' || Array.isArray(config.mcpServers) || isEmpty(config.mcpServers)) {
-    throw new Error(`'mcpServers' must be a non-empty object: ${configFilePath}`)
-  }
-  
-  for (const [serverName, serverConfig] of Object.entries(config.mcpServers)) {
-    if (!serverConfig || typeof serverConfig !== 'object') {
-      throw new Error(`Server '${serverName}' config must be an object: ${configFilePath}`)
-    }
-    
-    if (!serverConfig.command || typeof serverConfig.command !== 'string') {
-      throw new Error(`Server '${serverName}' missing required 'command' string: ${configFilePath}`)
-    }
-    
-    if (serverConfig.args && !Array.isArray(serverConfig.args)) {
-      throw new Error(`Server '${serverName}' 'args' must be an array: ${configFilePath}`)
-    }
-  }
+  return result.data
 }
 
 export async function loadConfig(configPath, { silent = false } = {}) {
@@ -100,13 +81,13 @@ Please check that the file exists and you have read permissions.`)
       throw new Error(errorMessage)
     }
     
-    validateConfig(config, resolvedPath)
+    const validatedConfig = validateConfig(config, resolvedPath)
     
     if (spinner) {
       spinner.success()
     }
     
-    return config
+    return validatedConfig
   } catch (error) {
     if (spinner) {
       spinner.error(`Failed to load config: ${error.message}`)
