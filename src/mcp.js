@@ -16,13 +16,17 @@ import { McpOAuthClientProvider } from './oauth/provider.js'
 import {
   createSpinner,
   formatDescription,
-  getClaudeConfigPath,
   logger,
   populateURITemplateParts,
   prettyPrint,
   readJSONSchemaInputs,
   readPromptArgumentInputs,
 } from './utils.js'
+import {
+  loadConfig,
+  pickServer,
+} from './config/index.js'
+
 
 async function createClient() {
   const client = new Client({ name: 'mcp-cli', version: '1.0.0' }, { capabilities: {} })
@@ -150,32 +154,6 @@ async function connectServer(transport, options = {}) {
   }
 }
 
-async function readConfig(configFilePath, { silent = false } = {}) {
-  if (!configFilePath || !existsSync(configFilePath)) {
-    throw new Error(`Config file not found: ${configFilePath}`)
-  }
-  if (silent) {
-    const config = await readFile(configFilePath, 'utf-8')
-    return JSON.parse(config)
-  }
-  const spinner = createSpinner(`Loading config from ${configFilePath}`)
-  const config = await readFile(configFilePath, 'utf-8')
-  spinner.success()
-  return JSON.parse(config)
-}
-
-async function pickServer(config) {
-  const { server } = await prompts({
-    name: 'server',
-    type: 'autocomplete',
-    message: 'Pick a server',
-    choices: Object.keys(config.mcpServers).map((s) => ({
-      title: s,
-      value: s,
-    })),
-  })
-  return server
-}
 
 export async function runWithCommand(command, args, env, options = {}) {
   const transport = new StdioClientTransport({ command, args, env })
@@ -188,11 +166,7 @@ export async function runWithCommand(command, args, env, options = {}) {
 
 export async function runWithConfigNonInteractive(configPath, serverName, command, target, argsString) {
   try {
-    const defaultConfigFile = getClaudeConfigPath()
-    const config = await readConfig(configPath || defaultConfigFile, { silent: true })
-    if (!config.mcpServers || isEmpty(config.mcpServers)) {
-      throw new Error('No mcp servers found in config')
-    }
+    const config = await loadConfig(configPath, { silent: true })
 
     const serverConfig = config.mcpServers[serverName]
     if (!serverConfig) {
@@ -235,11 +209,7 @@ export async function runWithConfigNonInteractive(configPath, serverName, comman
 }
 
 export async function runWithConfig(configPath, options = {}) {
-  const defaultConfigFile = getClaudeConfigPath()
-  const config = await readConfig(configPath || defaultConfigFile)
-  if (!config.mcpServers || isEmpty(config.mcpServers)) {
-    throw new Error('No mcp servers found in config')
-  }
+  const config = await loadConfig(configPath)
   const server = await pickServer(config)
   const serverConfig = config.mcpServers[server]
   if (serverConfig.env) {

@@ -29,6 +29,40 @@ npx @wong2/mcp-cli -c config.json
 
 The config file has the same format as the Claude Desktop config file.
 
+### Configuration Priority
+
+The CLI uses the following priority order for finding the configuration file:
+
+1. Command line flag: `--config` or `-c`
+2. Environment variable: `MCP_CLI_CONFIG`
+3. Default Claude Desktop config file
+
+Example using environment variable:
+```bash
+export MCP_CLI_CONFIG=/path/to/my/config.json
+npx @wong2/mcp-cli
+```
+
+### Configuration File Format
+
+The configuration file uses the same JSON format as Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "server-name": {
+      "command": "command",
+      "args": ["arg1", "arg2"]
+    }
+  }
+}
+```
+
+The CLI provides detailed error messages for common configuration issues including:
+- Invalid JSON syntax with line/column information
+- Missing required sections
+- Incorrect server configuration structure
+
 ### Run servers from NPM
 
 ```bash
