@@ -4,6 +4,10 @@ A CLI inspector for the Model Context Protocol
 
 https://github.com/user-attachments/assets/4cd113e9-f097-4c9d-b391-045c5f213183
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/wong2-mcp-cli).
+
 ## Features
 
 - Run MCP servers from various sources
