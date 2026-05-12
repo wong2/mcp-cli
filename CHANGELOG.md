@@ -1,3 +1,23 @@
+# 2.0.0
+
+- **Breaking**: require Node.js 20 or newer
+- Upgrade dependencies to latest (major bumps: `conf`, `eventsource`, `meow`, `open`, `yocto-spinner`)
+
+# 1.13.0
+
+- Add `--compact` flag to truncate primitive descriptions to a single line
+- Sanitize authorization URL before opening it
+
+# 1.12.0
+
+- Fix `listResourceTemplates` error when the server has no resources capability
+- Close transport correctly
+
+# 1.11.0
+
+- Add non-interactive mode (`call-tool` / `read-resource` / `get-prompt`)
+- Add support for resource templates
+
 # 1.10.0
 
 - Add `@wong2/mcp-cli purge` command to clear stored OAuth data
