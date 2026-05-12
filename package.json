@@ -16,21 +16,24 @@
     "MCP"
   ],
   "author": "wong2",
+  "engines": {
+    "node": ">=20"
+  },
   "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab",
   "dependencies": {
-    "@json-schema-tools/traverse": "^1.10.4",
-    "@modelcontextprotocol/sdk": "^1.15.1",
-    "conf": "^13.1.0",
-    "eventsource": "^3.0.6",
-    "express": "^5.1.0",
-    "get-port": "^7.1.0",
-    "lodash-es": "^4.17.21",
-    "meow": "^13.2.0",
-    "open": "^10.1.2",
+    "@json-schema-tools/traverse": "^1.11.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "conf": "^15.1.0",
+    "eventsource": "^4.1.0",
+    "express": "^5.2.1",
+    "get-port": "^7.2.0",
+    "lodash-es": "^4.18.1",
+    "meow": "^14.1.0",
+    "open": "^11.0.0",
     "prompts": "^2.4.2",
     "uri-template": "^2.0.0",
-    "yocto-spinner": "^0.2.2",
-    "yoctocolors": "^2.1.1",
+    "yocto-spinner": "^1.2.0",
+    "yoctocolors": "^2.1.2",
     "strict-url-sanitise": "^0.0.1"
   }
 }
