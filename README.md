@@ -35,11 +35,15 @@ The config file has the same format as the Claude Desktop config file.
 npx @wong2/mcp-cli npx <package-name> <args>
 ```
 
+Add `--pass-env` if the server needs environment variables from your current shell.
+
 ### Run locally developed server
 
 ```bash
 npx @wong2/mcp-cli node path/to/server/index.js args...
 ```
+
+Add `--pass-env` if the server needs environment variables from your current shell.
 
 ### Connect to a running server over Streamable HTTP
 
