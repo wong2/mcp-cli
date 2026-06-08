@@ -7,6 +7,13 @@
   },
   "type": "module",
   "homepage": "https://github.com/wong2/mcp-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wong2/mcp-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wong2/mcp-cli/issues"
+  },
   "files": [
     "src",
     "README.md"
