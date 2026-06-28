@@ -40,42 +40,136 @@ export async function readPromptArgumentInputs(args) {
   )
 }
 
-export async function readJSONSchemaInputs(schema) {
-  if (!schema || isEmpty(schema)) {
-    return {}
+function getPromptPropertyKey(path) {
+  if (path === '$' || !path.includes('.properties.')) {
+    return null
   }
+
+  return path
+    .replace(/^\$\.properties\./, '')
+    .replace(/\.properties\./g, '.')
+    .replace(/\.(?:anyOf|oneOf)\[\d+\]/g, '')
+}
+
+function isPropertyRequired(schema, keyPath) {
+  const parts = keyPath.split('.')
+  let current = schema
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    current = current?.properties?.[parts[index]]
+  }
+  return current?.required?.includes(parts.at(-1)) ?? false
+}
+
+function resolvePromptType(schemaNode) {
+  const types = Array.isArray(schemaNode.type)
+    ? schemaNode.type.filter((type) => type !== 'null')
+    : schemaNode.type
+      ? [schemaNode.type]
+      : []
+
+  if (types.length === 0) {
+    return null
+  }
+  if (types.length === 1) {
+    return types[0]
+  }
+
+  const scalarTypes = new Set(['string', 'integer', 'number', 'boolean'])
+  if (types.every((type) => scalarTypes.has(type))) {
+    if (types.includes('integer') || types.includes('number')) {
+      return 'number'
+    }
+    if (types.includes('boolean') && types.length === 1) {
+      return 'boolean'
+    }
+    return 'string'
+  }
+
+  return 'json'
+}
+
+function pushQuestion(questions, seenKeys, key, schemaType, schemaNode, required) {
+  seenKeys.add(key)
+  if (schemaType === 'string') {
+    questions.push({ key, type: 'text', required, initial: schemaNode.default })
+  } else if (schemaType === 'integer' || schemaType === 'number') {
+    questions.push({
+      key,
+      type: 'number',
+      required,
+      initial: schemaNode.default,
+      max: schemaNode.maximum ?? schemaNode.exclusiveMaximum,
+      min: schemaNode.minimum ?? schemaNode.exclusiveMinimum,
+    })
+  } else if (schemaType === 'boolean') {
+    questions.push({ type: 'confirm', key, required, initial: schemaNode.default })
+  } else if (schemaType === 'json') {
+    questions.push({
+      key,
+      type: 'text',
+      required,
+      parseJson: true,
+      initial: schemaNode.default === undefined ? undefined : JSON.stringify(schemaNode.default),
+    })
+  }
+}
+
+export function buildJSONSchemaQuestions(schema) {
+  if (!schema || isEmpty(schema)) {
+    return []
+  }
+
   const questions = []
+  const seenKeys = new Set()
   traverse.default(schema, (s, _isCycle, path, parent) => {
-    const key = path.replace('$.properties.', '').replace('.properties', '')
-    const required = parent?.required?.includes(key.split('.').at(-1))
+    const key = getPromptPropertyKey(path)
+    if (!key || seenKeys.has(key)) {
+      return
+    }
     if (parent && parent.type === 'array') {
       return
     }
-    if (s.type === 'string') {
-      questions.push({ key, type: 'text', required, initial: s.default })
-    } else if (s.type === 'integer' || s.type === 'number') {
-      questions.push({
-        key,
-        type: 'number',
-        required,
-        initial: s.default,
-        max: s.maximum ?? s.exclusiveMaximum,
-        min: s.minimum ?? s.exclusiveMinimum,
-      })
-    } else if (s.type === 'boolean') {
-      questions.push({ type: 'confirm', key, required, initial: s.default })
+
+    const required = isPropertyRequired(schema, key)
+    const promptType = resolvePromptType(s)
+    if (promptType) {
+      pushQuestion(questions, seenKeys, key, promptType, s, required)
     }
   })
+  return questions
+}
+
+export async function readJSONSchemaInputs(schema) {
+  const questions = buildJSONSchemaQuestions(schema)
+  if (questions.length === 0) {
+    return {}
+  }
   const results = {}
   for (const q of questions) {
-    const { key, required, ...options } = q
-    const { value } = await prompts({
-      name: 'value',
-      message: colors.dim(`${required ? '* ' : ''}${key}`),
-      ...options,
-    })
-    if (value !== '') {
-      setPath(results, q.key, value)
+    const { key, required, parseJson, ...options } = q
+    let parsedValue
+    while (true) {
+      const { value } = await prompts({
+        name: 'value',
+        message: colors.dim(`${required ? '* ' : ''}${key}${parseJson ? ' (JSON)' : ''}`),
+        ...options,
+      })
+      if (value === '') {
+        break
+      }
+      if (!parseJson) {
+        parsedValue = value
+        break
+      }
+      try {
+        parsedValue = JSON.parse(value)
+        break
+      } catch {
+        logger.error(colors.red(`Invalid JSON for "${key}". Please try again.`))
+      }
+    }
+    if (parsedValue !== undefined) {
+      setPath(results, q.key, parsedValue)
     }
   }
   return results

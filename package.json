@@ -18,7 +18,9 @@
     "src",
     "README.md"
   ],
-  "scripts": {},
+  "scripts": {
+    "test": "node --test src/**/*.test.js"
+  },
   "keywords": [
     "MCP"
   ],
