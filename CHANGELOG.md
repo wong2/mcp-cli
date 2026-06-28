@@ -1,3 +1,7 @@
+# 2.1.0
+
+- Add `list-tools` non-interactive command to list tools from a configured MCP server
+
 # 2.0.0
 
 - **Breaking**: require Node.js 20 or newer

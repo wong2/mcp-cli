@@ -59,7 +59,7 @@ npx @wong2/mcp-cli --sse http://localhost:8000/sse
 
 ### Non-interactive mode
 
-Run a specific tool, resource, or prompt without interactive prompts:
+Run a specific tool, resource, or prompt without interactive prompts, or list tools from a configured server:
 
 ```bash
 npx @wong2/mcp-cli [--config config.json] <command> <server-name>:<target> [--args '{}']
@@ -70,6 +70,9 @@ Examples:
 ```bash
 # Call a tool without arguments
 npx @wong2/mcp-cli -c config.json call-tool filesystem:list_files
+
+# List tools exposed by a configured server
+npx @wong2/mcp-cli -c config.json list-tools filesystem
 
 # Call a tool with arguments
 npx @wong2/mcp-cli -c config.json call-tool filesystem:read_file --args '{"path": "package.json"}'

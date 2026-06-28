@@ -15,6 +15,7 @@ const cli = meow(
     $ mcp-cli --url http://localhost:8000/mcp
     $ mcp-cli --sse http://localhost:8000/sse
     $ mcp-cli purge
+    $ mcp-cli [--config config.json] list-tools <server_name>
     $ mcp-cli [--config config.json] call-tool <server_name>:<tool_name> [--args '{"key":"value"}']
     $ mcp-cli [--config config.json] read-resource <server_name>:<resource_uri>
     $ mcp-cli [--config config.json] get-prompt <server_name>:<prompt_name> [--args '{"key":"value"}']
@@ -53,6 +54,9 @@ const options = { compact: cli.flags.compact }
 
 if (cli.input[0] === 'purge') {
   purge()
+} else if (cli.input.length >= 2 && cli.input[0] === 'list-tools') {
+  const [, serverName] = cli.input
+  await runWithConfigNonInteractive(cli.flags.config, serverName, 'list-tools')
 } else if (
   cli.input.length >= 2 &&
   (cli.input[0] === 'call-tool' || cli.input[0] === 'read-resource' || cli.input[0] === 'get-prompt')
